@@ -1,3 +1,7 @@
+pub struct GameState {
+    pub players: Vec<Player>,
+}
+
 // The player is identified with a unique integer ID
 // they have cards in their hand, and cards in play on their side
 pub struct Player {
@@ -21,6 +25,6 @@ pub struct Card {
 
 impl Card {
     fn play(&self, player: &mut Player) {
-
+        
     }
 }
