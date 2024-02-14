@@ -2,12 +2,12 @@
 #![allow(unused_variables)]
 
 // External Libs
-use terminal_menu::{menu, label, button, run, mut_menu}; // For user input
 use std::{net::UdpSocket, sync::Arc}; // For networking
+use terminal_menu::{button, label, menu, mut_menu, run}; // For user input
 
 // Internal Libs
 mod game;
-use game::{GameState, Player, Card, CardType};
+use game::{Card, CardType, GameState, Player};
 
 #[derive(Debug)]
 enum UserType {
@@ -20,12 +20,11 @@ fn main() {
         label("----------------"),
         label("Select User type"),
         label("----------------"),
-
         button("Host"),
-        button("Join")
-    ]); run(&main_menu);
+        button("Join"),
+    ]);
+    run(&main_menu);
 
-    
     let user_type: UserType = match mut_menu(&main_menu).selected_item_name() {
         "Host" => UserType::Host,
         _ => UserType::Client,

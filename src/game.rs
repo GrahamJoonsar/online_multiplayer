@@ -9,12 +9,12 @@ enum Stage {
 
 pub struct GameState {
     players: Vec<Player>,
-    stage: Stage
+    stage: Stage,
 }
 
 impl GameState {
     pub fn new(player_count: usize) -> GameState {
-        let mut state: GameState = GameState { 
+        let mut state: GameState = GameState {
             players: Vec::with_capacity(player_count),
             stage: Stage::MainMenu,
         };
@@ -43,7 +43,7 @@ impl Player {
     }
 
     pub fn select_card(&self) {
-        use terminal_menu::{menu, label, button, run, mut_menu}; // For user input
+        use terminal_menu::{button, label, menu, mut_menu, run}; // For user input
         let mut card_menu_vec = vec![
             label("---------------------"),
             label("Select a card to play"),
@@ -51,14 +51,12 @@ impl Player {
         ];
 
         for card in self.hand.iter() {
-            card_menu_vec.push(
-                button(format!("{}\t{}", card.title, card.description))
-            );
+            card_menu_vec.push(button(format!("{}\t{}", card.title, card.description)));
         }
 
-        let card_menu = menu(card_menu_vec); run(&card_menu);
+        let card_menu = menu(card_menu_vec);
+        run(&card_menu);
         println!("{}", mut_menu(&card_menu).selected_item_name());
-
     }
 
     pub fn add_card(&mut self, card: Card) {
@@ -84,11 +82,11 @@ pub struct Card {
 }
 
 impl Card {
-    pub fn new(title: String, description: String, card_type: CardType) -> Card{
+    pub fn new(title: String, description: String, card_type: CardType) -> Card {
         Card {
             title: format!("{: <20}", title), // makes it 20 characters long adding spaces
             description,
-            card_type
+            card_type,
         }
     }
 }
