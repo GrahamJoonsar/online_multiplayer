@@ -1,7 +1,7 @@
 use std::net::UdpSocket;
 
 pub fn main() {
-    let mut socket = UdpSocket::bind("0.0.0.0:8080").expect("failed to bind");
+    let socket = UdpSocket::bind("0.0.0.0:8080").expect("failed to bind");
     let mut buf = [0; 4096];
     loop {
         let sock = socket.try_clone().expect("clone failed");
