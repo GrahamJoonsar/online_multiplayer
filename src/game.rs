@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
+use alkahest::{alkahest, deserialize, serialize_to_vec};
+use std::net::UdpSocket;
 
 enum Stage {
     MainMenu,
@@ -23,6 +25,12 @@ impl GameState {
         }
         return state;
     }
+    pub fn is_active(&self, id: usize) -> bool {
+        self.players[id].addr.is_some()
+    }
+    pub fn add_player(&mut self, id: usize, socket: &UdpSocket) {
+        self.players[id].addr = Some(socket.try_clone().expect("could not clone socket"));
+    }
 }
 
 // The player is identified with a unique integer ID
@@ -31,6 +39,7 @@ pub struct Player {
     id: usize,
     hand: Vec<Card>,
     side: (u8, u8),
+    addr: Option<UdpSocket>,
 }
 
 impl Player {
@@ -39,6 +48,7 @@ impl Player {
             id,
             hand: vec![],
             side: (0, 0),
+            addr: None::<UdpSocket>,
         }
     }
 
@@ -64,6 +74,7 @@ impl Player {
     }
 }
 
+#[alkahest(Formula, SerializeRef, Deserialize)]
 pub enum CardType {
     Gub,
     Barricade,

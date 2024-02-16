@@ -7,4 +7,6 @@ default-run = "online_multiplayer"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+alkahest = {version = "0.3.0", features = ["alloc", "derive"]}
+rand = "0.8.5"
 terminal-menu = "3.0.0"

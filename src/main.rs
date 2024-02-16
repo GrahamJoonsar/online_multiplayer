@@ -9,28 +9,14 @@ mod client;
 mod game;
 use game::{Card, CardType, GameState, Player};
 
-#[derive(Debug)]
-enum UserType {
-    Host,
-    Client,
-}
-
 fn main() {
     let id = client::join();
-    //let game_state: GameState = GameState::new(2);
+    if (id == 255) {
+        println!("server is full at the moment");
+        return;
+    }
     let mut player: Player = Player::new(id);
-    let gub: Card = Card::new(
-        String::from("Gub"),
-        String::from("Counts as one point"),
-        CardType::Gub,
-    );
-    let elder: Card = Card::new(
-        String::from("Esteemed Elder"),
-        String::from("1.5 points; Immune to everything except lightning"),
-        CardType::Gub,
-    );
-
-    player.add_card(gub);
-    player.add_card(elder);
+    player.add_card(client::get_card());
+    player.add_card(client::get_card());
     player.select_card();
 }

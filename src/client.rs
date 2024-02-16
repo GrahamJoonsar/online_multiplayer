@@ -1,9 +1,44 @@
 use crate::game::{Card, CardType};
+use alkahest::{alkahest, deserialize, serialize_to_vec};
 use std::net::UdpSocket;
+
+pub fn get_card() -> Card {
+    #[alkahest(Formula, SerializeRef, Deserialize)]
+    struct SerializedCard {
+        title: [u8; 20],
+        description: [u8; 128],
+        card_type: CardType,
+    }
+    const serializedLen: usize = 164;
+
+    let mut data = Vec::<u8>::with_capacity(serializedLen);
+    for _ in 0..serializedLen {
+        data.push(0);
+    }
+
+    let socket = UdpSocket::bind("0.0.0.0:34254").expect("bind error");
+    let buf = [2; 1];
+    socket
+        .send_to(&buf, "50.116.40.226:8080")
+        .expect("send error");
+    socket.recv_from(&mut data).expect("recv error");
+
+    let de = deserialize::<SerializedCard, SerializedCard>(&data[..serializedLen]).unwrap();
+
+    Card::new(
+        std::str::from_utf8(&de.title)
+            .expect("bad string")
+            .to_string(),
+        std::str::from_utf8(&de.description)
+            .expect("bad string")
+            .to_string(),
+        de.card_type,
+    )
+}
 
 pub fn play_card(card: Card) {
     let socket = UdpSocket::bind("0.0.0.0:34254").expect("bind error");
-    let mut buf = [0; 13];
+    let mut buf = [3; 1];
     socket
         .send_to(&buf, "50.116.40.226:8080")
         .expect("send error");
@@ -11,5 +46,11 @@ pub fn play_card(card: Card) {
 }
 
 pub fn join() -> usize {
-    0
+    let socket = UdpSocket::bind("0.0.0.0:34254").expect("bind error");
+    let mut buf = [1; 1];
+    socket
+        .send_to(&buf, "50.116.40.226:8080")
+        .expect("send error");
+    socket.recv_from(&mut buf).expect("recv error");
+    buf[0] as usize
 }
