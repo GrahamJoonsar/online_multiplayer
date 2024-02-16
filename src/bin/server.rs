@@ -1,7 +1,7 @@
-use alkahest::{alkahest, deserialize, serialize_to_vec};
+use alkahest::{alkahest, serialize_to_vec};
 use rand::Rng;
 use std::net::{SocketAddr, UdpSocket};
-use std::sync::{Arc, Mutex, OnceLock};
+use std::sync::{Arc, Mutex};
 
 #[path = "../game.rs"]
 mod game;
@@ -30,11 +30,11 @@ pub fn main() {
                 std::thread::spawn(move || {
                     println!("Handling connection from {}", &src);
                     let buf = &mut buf[..amt];
-                    if (buf[0] == 1) {
+                    if buf[0] == 1 {
                         println!("join request from {}", &src);
                         join(&sock, &src, &state);
                     }
-                    if (buf[0] == 2) {
+                    if buf[0] == 2 {
                         get_card(&sock, &src, &state);
                     }
                     //buf.reverse();
@@ -53,23 +53,23 @@ fn join(socket: &UdpSocket, addr: &SocketAddr, state: &Arc<Mutex<GameState>>) {
     for index in 0..MAX_PLAYERS {
         if !data.is_active(index) {
             data.add_player(index, socket);
-            let mut buf: [u8; 1] = [index.try_into().unwrap(); 1];
+            let buf: [u8; 1] = [index.try_into().unwrap(); 1];
             socket.send_to(&buf, addr).expect("error sending");
             break;
         }
     }
     println!("lobby full");
-    let mut buf: [u8; 1] = [255; 1];
+    let buf: [u8; 1] = [255; 1];
     socket.send_to(&buf, addr).expect("error sending");
 }
 
-fn get_card(socket: &UdpSocket, addr: &SocketAddr, state: &Arc<Mutex<GameState>>) {
+fn get_card(socket: &UdpSocket, addr: &SocketAddr, _state: &Arc<Mutex<GameState>>) {
     let num = rand::thread_rng().gen_range(0..2);
-    if (num == 0) {
+    if num == 0 {
         //let mut data = state.lock().unwrap();
         let value = new_card("Gub", "Counts as one point", CardType::Gub);
         let mut data = Vec::new();
-        let (size, _) = serialize_to_vec::<SerializedCard, _>(&value, &mut data);
+        let (_size, _) = serialize_to_vec::<SerializedCard, _>(&value, &mut data);
         socket.send_to(&data, addr).expect("error sending");
     } else {
         let value = new_card(
@@ -78,7 +78,7 @@ fn get_card(socket: &UdpSocket, addr: &SocketAddr, state: &Arc<Mutex<GameState>>
             CardType::Gub,
         );
         let mut data = Vec::new();
-        let (size, _) = serialize_to_vec::<SerializedCard, _>(&value, &mut data);
+        let (_size, _) = serialize_to_vec::<SerializedCard, _>(&value, &mut data);
         socket.send_to(&data, addr).expect("error sending");
     }
 }
@@ -94,7 +94,6 @@ fn new_card(name: &str, description: &str, card_type: CardType) -> SerializedCar
         card.title[i] = e;
         i += 1;
     }
-    let s2 = "Counts as one point";
     i = 0;
     for e in description.bytes() {
         card.description[i] = e;

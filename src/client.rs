@@ -1,5 +1,5 @@
 use crate::game::{Card, CardType};
-use alkahest::{alkahest, deserialize, serialize_to_vec};
+use alkahest::{alkahest, deserialize};
 use std::net::UdpSocket;
 
 pub fn get_card() -> Card {
@@ -9,10 +9,10 @@ pub fn get_card() -> Card {
         description: [u8; 128],
         card_type: CardType,
     }
-    const serializedLen: usize = 164;
+    const SERIALIZED_LEN: usize = 164;
 
-    let mut data = Vec::<u8>::with_capacity(serializedLen);
-    for _ in 0..serializedLen {
+    let mut data = Vec::<u8>::with_capacity(SERIALIZED_LEN);
+    for _ in 0..SERIALIZED_LEN {
         data.push(0);
     }
 
@@ -23,7 +23,7 @@ pub fn get_card() -> Card {
         .expect("send error");
     socket.recv_from(&mut data).expect("recv error");
 
-    let de = deserialize::<SerializedCard, SerializedCard>(&data[..serializedLen]).unwrap();
+    let de = deserialize::<SerializedCard, SerializedCard>(&data[..SERIALIZED_LEN]).unwrap();
 
     Card::new(
         std::str::from_utf8(&de.title)

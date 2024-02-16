@@ -1,17 +1,14 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
 
-// External Libs
-use terminal_menu::{button, label, menu, mut_menu, run}; // For user input
-
 // Internal Libs
 mod client;
 mod game;
-use game::{Card, CardType, GameState, Player};
+use game::{Player};
 
 fn main() {
     let id = client::join();
-    if (id == 255) {
+    if id == 255 {
         println!("server is full at the moment");
         return;
     }

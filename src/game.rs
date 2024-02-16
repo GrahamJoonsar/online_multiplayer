@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
-use alkahest::{alkahest, deserialize, serialize_to_vec};
+use alkahest::{alkahest};
 use std::net::UdpSocket;
 
 enum Stage {
